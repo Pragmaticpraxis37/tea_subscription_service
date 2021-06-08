@@ -26,21 +26,38 @@ describe 'Subscribe customer to tea subscription' do
   end
 
   describe 'happy path' do
-    it 'subscribes a customer to a tea subscription' do
+    it 'subscribes a customer to a tea subscription and save information in the database' do
 
       customer_subscription_params = ({
         customer_id: @customer_id,
         subscription_id: @subscription_id
         })
 
-      post api_v1_customer_subscription_index_path, params: JSON.generate(customer_subscription: customer_subscription_params)
+      headers = {"CONTENT_TYPE" => "application/json"}
+
+      post api_v1_customer_subscription_index_path, headers: headers, params: JSON.generate(customer_subscription: customer_subscription_params)
+
+      require "pry"; binding.pry
 
       expect(response).to be_successful
+      expect(response.status).to eq(204)
 
       created_customer_subscription = CustomerSubscription.last
 
       expect(created_customer_subscription.customer_id).to eq(@customer_id)
       expect(created_customer_subscription.subscription_id).to eq(@subscription_id)
+      expect(created_customer_subscription.customer_id).to_not eq(@customer_2.id)
+      expect(created_customer_subscription.customer_id).to_not eq(@subscription_2.id)
+
+      subscription_tea_ids = [@tea_1.id, @tea_2.id, @tea_3.id]
+      non_subscription_tea_ids = [@tea_4.id, @tea_5.id, @tea_6.id]
+
+      customer_subscribed_tea_ids = created_customer_subscription.subscription.teas.map do |tea|
+        tea.id
+      end
+
+      expect(customer_subscribed_tea_ids).to eq(subscription_tea_ids)
+      expect(customer_subscribed_tea_ids).to_not eq(non_subscription_tea_ids)
     end
   end
 
