@@ -85,4 +85,28 @@ describe 'Subscribe customer to tea subscription' do
     end
   end
 
+  describe 'sad path' do
+    it 'renders an error message if both a customer id and a subscription id are not sent as parameters' do
+
+      customer_subscription_params = ({
+        customer_id: @customer_id,
+        subscription_id: ""
+        })
+
+      headers = {"CONTENT_TYPE" => "application/json"}
+
+      post api_v1_customer_subscription_index_path, headers: headers, params: JSON.generate(customer_subscription: customer_subscription_params)
+
+      require "pry"; binding.pry
+
+      expect(response).to_not be_successful
+      expect(response.status).to eq(400)
+
+      error = JSON.parse(response.body, symbolize_names: true)
+
+      expect(error).to be_a(Hash)
+      expect(error[:error]).to eq("Please provide both a customer id and a subscription id.")
+    end
+  end
+
 end

@@ -16,20 +16,18 @@ describe 'Cancel customer tea subscription' do
   end
 
   describe 'happy path' do
-    xit "cancels a customer's tea subscription and save information in the database" do
+    it "cancels a customer's tea subscription and save information in the CustomerSubscription table" do
 
       # require "pry"; binding.pry
 
-      customer_cancel_subscription_params = ({
+      customer_subscription_params = ({
         customer_id: @customer.id,
         subscription_id: @subscription.id
         })
 
       headers = {"CONTENT_TYPE" => "application/json"}
 
-      update api_v1_customer_subscription_path, headers: headers, params: JSON.generate()
-
-      post api_v1_customer_subscription_index_path, headers: headers, params: JSON.generate(cancel_customer_subscription: cancel_customer_subscription_params)
+      patch api_v1_customer_subscription_path(@subscription), headers: headers, params: JSON.generate(customer_subscription: customer_subscription_params)
 
       require "pry"; binding.pry
 
