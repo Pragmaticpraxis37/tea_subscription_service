@@ -26,7 +26,7 @@ describe 'Subscribe customer to tea subscription' do
   end
 
   describe 'happy path' do
-    it 'subscribes a customer to a tea subscription and save information in the database' do
+    it 'subscribes a customer to a tea subscription and saves the information in the database' do
 
       customer_subscription_params = ({
         customer_id: @customer_id,
@@ -36,11 +36,6 @@ describe 'Subscribe customer to tea subscription' do
       headers = {"CONTENT_TYPE" => "application/json"}
 
       post api_v1_customer_subscription_index_path, headers: headers, params: JSON.generate(customer_subscription: customer_subscription_params)
-
-      require "pry"; binding.pry
-
-      expect(response).to be_successful
-      expect(response.status).to eq(204)
 
       created_customer_subscription = CustomerSubscription.last
 
@@ -58,6 +53,35 @@ describe 'Subscribe customer to tea subscription' do
 
       expect(customer_subscribed_tea_ids).to eq(subscription_tea_ids)
       expect(customer_subscribed_tea_ids).to_not eq(non_subscription_tea_ids)
+    end
+
+    it 'subscribes a customer to a tea subscription and returns a payload of JSON data' do
+
+      customer_subscription_params = ({
+        customer_id: @customer_id,
+        subscription_id: @subscription_id
+        })
+
+      headers = {"CONTENT_TYPE" => "application/json"}
+
+      post api_v1_customer_subscription_index_path, headers: headers, params: JSON.generate(customer_subscription: customer_subscription_params)
+
+      expect(response).to be_successful
+      expect(response.status).to eq(201)
+
+      customer_subscription = JSON.parse(response.body, symbolize_names: true)
+
+      expect(customer_subscription).to be_a(Hash)
+      expect(customer_subscription.keys).to match_array([:data])
+      expect(customer_subscription[:data]).to be_a(Hash)
+      expect(customer_subscription[:data].keys).to match_array([:id, :type, :attributes])
+      expect(customer_subscription[:data][:id]).to be_a(String)
+      expect(customer_subscription[:data][:type]).to be_a(String)
+      expect(customer_subscription[:data][:type]).to eq('customer_subscription')
+      expect(customer_subscription[:data][:attributes].keys).to match_array([:id, :customer_id, :subscription_id])
+      expect(customer_subscription[:data][:attributes][:id]).to be_an(Integer)
+      expect(customer_subscription[:data][:attributes][:customer_id]).to be_an(Integer)
+      expect(customer_subscription[:data][:attributes][:subscription_id]).to be_an(Integer)
     end
   end
 
