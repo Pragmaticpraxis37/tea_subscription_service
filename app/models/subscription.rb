@@ -5,5 +5,5 @@ class Subscription < ApplicationRecord
   has_many :subscription_teas
   has_many :teas, through: :subscription_teas
 
-  # validates :first_name, :last_name, :email, :address, :presence => true
+  validates :title, :price, :status, :frequency_per_month, :presence => true
 end
