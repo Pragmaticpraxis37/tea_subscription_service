@@ -97,8 +97,6 @@ describe 'Subscribe customer to tea subscription' do
 
       post api_v1_customer_subscription_index_path, headers: headers, params: JSON.generate(customer_subscription: customer_subscription_params)
 
-      require "pry"; binding.pry
-
       expect(response).to_not be_successful
       expect(response.status).to eq(400)
 
@@ -107,6 +105,45 @@ describe 'Subscribe customer to tea subscription' do
       expect(error).to be_a(Hash)
       expect(error[:error]).to eq("Please provide both a customer id and a subscription id.")
     end
+
+    it 'renders an error message if the subscription id does not match an existing customer' do
+      customer_subscription_params = ({
+        customer_id: 10000000000000000,
+        subscription_id: @subscription_id
+        })
+
+      headers = {"CONTENT_TYPE" => "application/json"}
+
+      post api_v1_customer_subscription_index_path, headers: headers, params: JSON.generate(customer_subscription: customer_subscription_params)
+
+      expect(response).to_not be_successful
+      expect(response.status).to eq(400)
+
+      error = JSON.parse(response.body, symbolize_names: true)
+
+      expect(error).to be_a(Hash)
+      expect(error[:error]).to eq("The customer does not exist.")
+    end
+
+    it 'renders an error message if the customer id does not match an existing customer' do
+      customer_subscription_params = ({
+        customer_id: @customer_id,
+        subscription_id: 10000000000000000
+        })
+
+      headers = {"CONTENT_TYPE" => "application/json"}
+
+      post api_v1_customer_subscription_index_path, headers: headers, params: JSON.generate(customer_subscription: customer_subscription_params)
+
+      expect(response).to_not be_successful
+      expect(response.status).to eq(400)
+
+      error = JSON.parse(response.body, symbolize_names: true)
+
+      expect(error).to be_a(Hash)
+      expect(error[:error]).to eq("The subscription does not exist.")
+    end
+
   end
 
 end
