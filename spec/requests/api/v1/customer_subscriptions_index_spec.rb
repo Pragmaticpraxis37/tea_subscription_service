@@ -61,6 +61,8 @@ describe "Show all a customer's tea subscriptions" do
 
       customer_subscriptions = JSON.parse(response.body, symbolize_names: true)
 
+      require "pry"; binding.pry
+
       expect(customer_subscriptions).to be_a(Hash)
       expect(customer_subscriptions.keys).to match_array([:data])
       expect(customer_subscriptions[:data]).to be_a(Array)
