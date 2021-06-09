@@ -28,7 +28,7 @@ describe 'Cancel customer tea subscription' do
 
       headers = {"CONTENT_TYPE" => "application/json"}
 
-      patch api_v1_customer_subscription_path(@subscription), headers: headers, params: JSON.generate(customer_subscription: customer_subscription_params)
+      patch api_v1_customer_subscription_path(@customer), headers: headers, params: JSON.generate(customer_subscription: customer_subscription_params)
 
       customer_subscription =  CustomerSubscription.find_by(customer_id: @customer.id, subscription_id: @subscription.id)
       expect(customer_subscription.subscription.status).to eq('Cancelled')
@@ -43,7 +43,7 @@ describe 'Cancel customer tea subscription' do
 
       headers = {"CONTENT_TYPE" => "application/json"}
 
-      patch api_v1_customer_subscription_path(@subscription), headers: headers, params: JSON.generate(customer_subscription: customer_subscription_params)
+      patch api_v1_customer_subscription_path(@customer), headers: headers, params: JSON.generate(customer_subscription: customer_subscription_params)
 
 
       expect(response).to be_successful
@@ -79,7 +79,7 @@ describe 'Cancel customer tea subscription' do
 
       headers = {"CONTENT_TYPE" => "application/json"}
 
-      patch api_v1_customer_subscription_path(@subscription), headers: headers, params: JSON.generate(customer_subscription: customer_subscription_params)
+      patch api_v1_customer_subscription_path(@customer), headers: headers, params: JSON.generate(customer_subscription: customer_subscription_params)
 
       expect(response).to_not be_successful
       expect(response.status).to eq(400)
@@ -90,5 +90,4 @@ describe 'Cancel customer tea subscription' do
       expect(error[:error]).to eq("The customer does not have this subscription.")
     end
   end
-
 end

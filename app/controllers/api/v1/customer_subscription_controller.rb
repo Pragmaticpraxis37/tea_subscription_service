@@ -1,6 +1,16 @@
 class Api::V1::CustomerSubscriptionController < ApplicationController
   before_action :check_customer_subscription_exists, only: [:update]
-  before_action :check_params, :check_customer_exists, :check_subscription_exists
+  before_action :check_params, :check_customer_exists, :check_subscription_exists, except: [:show]
+
+  def show
+    customer = Customer.find(params[:id])
+    subscriptions = customer.subscriptions
+    if subscriptions.empty?
+      render json: {message: "This customer has no subscriptions."}
+    else
+      render json: SubscriptionSerializer.new(subscriptions), status: :created
+    end
+  end
 
   def create
     new_customer_subscription = CustomerSubscription.create(customer_subscription)
