@@ -2,9 +2,7 @@ class Api::V1::CustomerSubscriptionController < ApplicationController
   include Errors
   before_action :check_customer_subscription_exists, only: [:update]
   before_action :check_params, :check_customer_exists, :check_subscription_exists, except: [:show]
-  # :check_params
 
-  # require "pry"; binding.pry
 
   def show
     customer = Customer.find(params[:id])
@@ -17,8 +15,7 @@ class Api::V1::CustomerSubscriptionController < ApplicationController
   end
 
   def create
-    # require 'errors'
-    # require "pry"; binding.pry
+
     new_customer_subscription = CustomerSubscription.create(customer_subscription)
 
     if new_customer_subscription.save
