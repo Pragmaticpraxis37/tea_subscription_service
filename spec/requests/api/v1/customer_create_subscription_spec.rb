@@ -55,7 +55,7 @@ describe 'Subscribe customer to tea subscription' do
       expect(customer_subscribed_tea_ids).to_not eq(non_subscription_tea_ids)
     end
 
-    it 'subscribes a customer to a tea subscription and returns a payload of JSON data' do
+    it 'subscribes a customer to a tea subscription and returns a payload of JSON created customer subscription data' do
 
       customer_subscription_params = ({
         customer_id: @customer_id,
@@ -143,7 +143,5 @@ describe 'Subscribe customer to tea subscription' do
       expect(error).to be_a(Hash)
       expect(error[:error]).to eq("The subscription does not exist.")
     end
-
   end
-
 end

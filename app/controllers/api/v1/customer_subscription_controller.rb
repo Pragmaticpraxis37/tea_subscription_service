@@ -1,4 +1,5 @@
 class Api::V1::CustomerSubscriptionController < ApplicationController
+  before_action :check_customer_subscription_exists, only: [:update]
   before_action :check_params, :check_customer_exists, :check_subscription_exists
 
   def create
@@ -10,8 +11,9 @@ class Api::V1::CustomerSubscriptionController < ApplicationController
   end
 
   def update
-    require "pry"; binding.pry
-    # if customer_subscription[:customer_id].present? && customer_subscription[:subscription_id].present?
+    subscription = CustomerSubscription.find_by(customer_id: customer_subscription[:customer_id], subscription_id: customer_subscription[:subscription_id])
+    cancelled = Subscription.update(subscription.subscription_id, status: "Cancelled")
+    render json: SubscriptionSerializer.new(cancelled), status: :created
   end
 
   private
@@ -35,6 +37,12 @@ class Api::V1::CustomerSubscriptionController < ApplicationController
   def check_subscription_exists
     if !Subscription.exists?(customer_subscription[:subscription_id])
       render json: {error: "The subscription does not exist."}, status: 400
+    end
+  end
+
+  def check_customer_subscription_exists
+    if !CustomerSubscription.exists?(customer_id: customer_subscription[:customer_id], subscription_id: customer_subscription[:subscription_id])
+      render json: {error: "The customer does not have this subscription."}, status: 400
     end
   end
 end
