@@ -67,4 +67,28 @@ describe 'Cancel customer tea subscription' do
       expect(customer_subscription[:data][:attributes][:frequency_per_month]).to be_an(Integer)
     end
   end
+
+  describe 'sad path' do
+    it 'renders an error message if the customer id and subscription id do not both match to a CustomerSubscription record' do
+      incorrect_customer = create(:customer)
+
+      customer_subscription_params = ({
+        customer_id: incorrect_customer.id,
+        subscription_id: @subscription.id
+        })
+
+      headers = {"CONTENT_TYPE" => "application/json"}
+
+      patch api_v1_customer_subscription_path(@subscription), headers: headers, params: JSON.generate(customer_subscription: customer_subscription_params)
+
+      expect(response).to_not be_successful
+      expect(response.status).to eq(400)
+
+      error = JSON.parse(response.body, symbolize_names: true)
+
+      expect(error).to be_a(Hash)
+      expect(error[:error]).to eq("The customer does not have this subscription.")
+    end
+  end
+
 end
