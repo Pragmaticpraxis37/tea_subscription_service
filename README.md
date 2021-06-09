@@ -66,7 +66,7 @@ response:
 
 GET `http://localhost:3000/api/v1/customer_subscription/1`
 response: 
-````
+```
 {
     "data": [{
         "id": "1",
